@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kuis Interaktif Latihan UAS</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --success: #16a34a;
+      --success-bg: #f0fdf4;
+      --success-border: #86efac;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --danger-border: #fca5a5;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 16px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 640px;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+      margin: auto 0;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #ffffff;
+      padding: 20px 22px;
+    }
+
+    .header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .header p {
+      font-size: 0.875rem;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .content {
+      padding: 22px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Halaman Pilih Mata Kuliah */
+    .section-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .course-select {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background-color: #fff;
+      color: var(--text);
+      margin-bottom: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .course-select:focus {
+      border-color: var(--primary);
+    }
+
+    .course-cards {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .course-card {
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #fff;
+    }
+
+    .course-card:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .course-card.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .course-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .course-code {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: #dbeafe;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .course-count {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .course-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .course-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    /* Tombol Utama */
+    .btn {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:active {
+      transform: scale(0.99);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background-color: #e2e8f0;
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background-color: #cbd5e1;
+    }
+
+    /* Halaman Kuis */
+    .quiz-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .question-text {
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.55;
+      margin-bottom: 18px;
+      color: var(--text);
+    }
+
+    .options-list {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.15s ease;
+      min-height: 52px;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-letter {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .option-btn.correct {
+      background-color: var(--success-bg);
+      border-color: var(--success);
+      color: #14532d;
+    }
+
+    .option-btn.correct .option-letter {
+      background-color: var(--success);
+      color: #ffffff;
+    }
+
+    .option-btn.wrong {
+      background-color: var(--danger-bg);
+      border-color: var(--danger);
+      color: #7f1d1d;
+    }
+
+    .option-btn.wrong .option-letter {
+      background-color: var(--danger);
+      color: #ffffff;
+    }
+
+    /* Kotak Feedback & Penjelasan */
+    .feedback-box {
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      border: 1.5px solid transparent;
+    }
+
+    .feedback-box.correct {
+      background-color: var(--success-bg);
+      border-color: var(--success-border);
+      color: #14532d;
+    }
+
+    .feedback-box.wrong {
+      background-color: var(--danger-bg);
+      border-color: var(--danger-border);
+      color: #7f1d1d;
+    }
+
+    .feedback-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Halaman Skor Akhir */
+    .score-card {
+      text-align: center;
+      padding: 18px 12px;
+      background: var(--primary-light);
+      border-radius: 14px;
+      margin-bottom: 18px;
+    }
+
+    .score-circle {
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 12px;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+    }
+
+    .score-number {
+      font-size: 1.85rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      opacity: 0.9;
+      margin-top: 3px;
+    }
+
+    .score-status {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .score-detail {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stat-item {
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .stat-item.benar {
+      background: var(--success-bg);
+      border-color: var(--success-border);
+      color: #14532d;
+    }
+
+    .stat-item.salah {
+      background: var(--danger-bg);
+      border-color: var(--danger-border);
+      color: #7f1d1d;
+    }
+
+    .stat-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+
+    .stat-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .action-group {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .review-section h3 {
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .review-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    .review-item.ok {
+      border-left: 4px solid var(--success);
+    }
+
+    .review-item.no {
+      border-left: 4px solid var(--danger);
+    }
+
+    .review-q {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .review-ans {
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      .header {
+        padding: 16px 18px;
+      }
+      .content {
+        padding: 16px;
+      }
+      .question-text {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="header">
+      <h1 id="headerTitle">Latihan Kuis UAS</h1>
+      <p id="headerSubtitle">Pilih mata kuliah untuk memulai latihan soal acak</p>
+    </div>
+
+    <!-- SCREEN 1: PILIH MATA KULIAH -->
+    <div id="startScreen" class="content">
+      <label for="courseSelect" class="section-label">Pilih Mata Kuliah:</label>
+      <select id="courseSelect" class="course-select"></select>
+
+      <div id="courseCards" class="course-cards"></div>
+
+      <button id="startBtn" class="btn btn-primary">Mulai Kuis Sekarang</button>
+    </div>
+
+    <!-- SCREEN 2: KUIS BERLANGSUNG -->
+    <div id="quizScreen" class="content hidden">
+      <div class="quiz-meta">
+        <span id="questionCounter">Soal 1 dari 5</span>
+        <span id="liveScore">Skor: 0</span>
+      </div>
+      <div class="progress-bar">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+
+      <div id="questionText" class="question-text"></div>
+      <div id="optionsList" class="options-list"></div>
+
+      <div id="feedbackBox" class="feedback-box hidden">
+        <div id="feedbackTitle" class="feedback-title"></div>
+        <div id="feedbackExplanation"></div>
+      </div>
+
+      <button id="nextBtn" class="btn btn-primary hidden">Soal Berikutnya</button>
+    </div>
+
+    <!-- SCREEN 3: HASIL & SKOR AKHIR -->
+    <div id="resultScreen" class="content hidden">
+      <div class="score-card">
+        <div class="score-circle">
+          <span id="finalScore" class="score-number">0</span>
+          <span class="score-label">NILAI</span>
+        </div>
+        <div id="scoreStatus" class="score-status">Hasil Kuis</div>
+        <div id="scoreDetail" class="score-detail"></div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-item benar">
+          <div id="totalCorrect" class="stat-value">0</div>
+          <div class="stat-name">Jawaban Benar</div>
+        </div>
+        <div class="stat-item salah">
+          <div id="totalWrong" class="stat-value">0</div>
+          <div class="stat-name">Jawaban Salah</div>
+        </div>
+      </div>
+
+      <div class="action-group">
+        <button id="retryBtn" class="btn btn-primary">Ulangi Kuis (Acak Ulang)</button>
+        <button id="changeCourseBtn" class="btn btn-secondary">Pilih Mata Kuliah Lain</button>
+      </div>
+
+      <div class="review-section">
+        <h3>Ringkasan Pembahasan</h3>
+        <div id="reviewList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // BANK SOAL UAS
+    // Tambahkan atau ganti isi array "soal" di bawah ini sesuai dokumen kisi-kisi
+    // =========================================================================
+    const bankSoal = {
+      STSI4402: {
+        kode: "STSI4402",
+        nama: "Tata Kelola Teknologi Informasi",
+        deskripsi: "Kisi-kisi UAS mencakup konsep IT Governance, COBIT, keselarasan strategis, manajemen risiko, dan evaluasi kinerja TI.",
+        soal: [
+          {
+            pertanyaan: "Perbedaan mendasar antara Tata Kelola TI (IT Governance) dan Manajemen TI (IT Management) dalam kerangka kerja COBIT terletak pada fokus utamanya, yaitu...",
+            pilihan: [
+              "Tata kelola TI berfokus pada pemeliharaan perangkat keras harian, sedangkan manajemen TI menetapkan visi jangka panjang.",
+              "Tata kelola TI memastikan kebutuhan pemangku kepentingan dievaluasi untuk menentukan arah dan memantau kinerja, sedangkan manajemen TI merencanakan, membangun, menjalankan, dan memantau aktivitas sesuai arah tersebut.",
+              "Tata kelola TI hanya dilakukan oleh staf teknis operasional, sedangkan manajemen TI dilakukan oleh dewan direksi.",
+              "Tata kelola TI berfokus pada pembelian lisensi perangkat lunak, sedangkan manajemen TI mengurus audit eksternal."
+            ],
+            jawabanBenar: 1,
+            penjelasan: "Dalam COBIT, Governance (EDM: Evaluate, Direct, Monitor) memastikan arah strategis dan pencapaian nilai bagi pemangku kepentingan, sedangkan Management (PBRM: Plan, Build, Run, Monitor) mengeksekusi operasional selaras dengan arah tata kelola."
+          },
+          {
+            pertanyaan: "Domain dalam kerangka kerja COBIT yang secara khusus bertanggung jawab pada proses tata kelola untuk mengevaluasi opsi strategis, mengarahkan manajemen senior, dan memantau pencapaian tujuan adalah...",
+            pilihan: [
+              "APO (Align, Plan and Organise)",
+              "BAI (Build, Acquire and Implement)",
+              "EDM (Evaluate, Direct and Monitor)",
+              "DSS (Deliver, Service and Support)"
+            ],
+            jawabanBenar: 2,
+            penjelasan: "EDM (Evaluate, Direct and Monitor) adalah satu-satunya domain Governance di COBIT, sedangkan APO, BAI, DSS, dan MEA merupakan domain Management."
+          },
+          {
+            pertanyaan: "Tujuan utama dari keselarasan strategis (Strategic Alignment) antara teknologi informasi dan bisnis dalam tata kelola TI adalah...",
+            pilihan: [
+              "Memastikan anggaran TI selalu lebih besar daripada anggaran divisi operasional lainnya.",
+              "Menghubungkan perencanaan bisnis dan TI, mendefinisikan serta memelihara proposisi nilai TI, dan menyelaraskan operasi TI dengan operasi perusahaan.",
+              "Menggantikan seluruh proses pengambilan keputusan manajemen dengan sistem otomatis.",
+              "Membatasi penggunaan teknologi baru agar biaya pemeliharaan tetap nol."
+            ],
+            jawabanBenar: 1,
+            penjelasan: "Strategic Alignment memastikan investasi dan operasional TI mendukung langsung sasaran strategis serta menciptakan nilai bisnis bagi organisasi."
+          },
+          {
+            pertanyaan: "Dalam manajemen risiko TI (IT Risk Management), langkah yang diambil organisasi ketika biaya pengendalian risiko jauh lebih besar dibandingkan potensi kerugian yang ditimbulkan oleh risiko tersebut adalah...",
+            pilihan: [
+              "Risk Avoidance (Menghindari risiko)",
+              "Risk Acceptance (Menerima risiko)",
+              "Risk Transfer (Memindahkan risiko)",
+              "Risk Elimination (Menghapus seluruh sistem)"
+            ],
+            jawabanBenar: 1,
+            penjelasan: "Risk Acceptance dilakukan apabila dampak dan probabilitas risiko berada dalam batas toleransi (risk appetite) organisasi sehingga biaya mitigasi tidak sebanding dengan manfaatnya."
+          },
+          {
+            pertanyaan: "Instrumen pengukuran kinerja tata kelola TI yang menerjemahkan strategi organisasi ke dalam empat perspektif (Kontribusi Perusahaan, Orientasi Pengguna, Keunggulan Operasional, dan Orientasi Masa Depan) dikenal sebagai...",
+            pilihan: [
+              "IT Balanced Scorecard (IT BSC)",
+              "Service Level Agreement (SLA)",
+              "Business Continuity Plan (BCP)",
+              "Total Cost of Ownership (TCO)"
+            ],
+            jawabanBenar: 0,
+            penjelasan: "IT Balanced Scorecard (IT BSC) mengadaptasi konsep Balanced Scorecard untuk mengevaluasi kinerja TI secara komprehensif dari sisi nilai bisnis, pengguna, efisiensi internal, dan kesiapan masa depan."
+          }
+        ]
+      },
+      STSI4404: {
+        kode: "STSI4404",
+        nama: "Keamanan Jaringan",
+        deskripsi: "Latihan soal UAS mencakup aspek keamanan informasi (CIA), kriptografi, firewall, cybercrime, dan standar ISO/IEC 27001.",
+        soal: [
+          {
+            pertanyaan: "Dalam teknologi firewall, fungsi utama dari sebuah Bastion Host adalah...",
+            pilihan: [
+              "Menyimpan seluruh cadangan basis data internal secara tidak terenkripsi.",
+              "Berperan sebagai komputer gerbang yang diperkuat keamanannya dan terekspos ke jaringan publik untuk menyaring serta mengontrol akses menuju jaringan internal.",
+              "Menghubungkan seluruh workstation karyawan langsung ke internet tanpa melalui router.",
+              "Menonaktifkan sistem deteksi intrusi agar lalu lintas jaringan berjalan lebih cepat."
+            ],
+            jawabanBenar: 1,
+            penjelasan: "Bastion host adalah sistem yang sengaja dirancang dan diperkuat (hardened) untuk bertahan dari serangan eksternal karena posisinya berada di perimeter jaringan publik (seperti DMZ)."
+          },
+          {
+            pertanyaan: "Aspek keamanan informasi yang menjamin bahwa data tidak diubah, dimodifikasi, atau dirusak oleh pihak yang tidak berwenang selama proses transmisi maupun penyimpanan disebut...",
+            pilihan: [
+              "Confidentiality (Kerahasiaan)",
+              "Integrity (Integritas)",
+              "Availability (Ketersediaan)",
+              "Non-repudiation (Nir-sangkal)"
+            ],
+            jawabanBenar: 1,
+            penjelasan: "Integrity memastikan keutuhan dan keakuratan data tetap terjaga dari modifikasi tidak sah, sedangkan Confidentiality menjaga kerahasiaan dan Availability memastikan akses saat dibutuhkan."
+          },
+          {
+            pertanyaan: "Pada kriptografi asimetris (Public Key Cryptography), apabila pengirim ingin menjamin kerahasiaan pesan sehingga hanya penerima yang dituju yang dapat membacanya, maka pesan tersebut harus dienkripsi menggunakan...",
+            pilihan: [
+              "Private key milik pengirim",
+              "Public key milik penerima",
+              "Public key milik pengirim",
+              "Session key yang disiarkan ke publik"
+            ],
+            jawabanBenar: 1,
+            penjelasan: "Pesan dienkripsi menggunakan Public Key milik penerima sehingga hanya dapat didekripsi menggunakan Private Key yang hanya dimiliki oleh penerima tersebut."
+          }
+        ]
+      }
+    };
+
+    // =========================================================================
+    // STATE APLIKASI
+    // =========================================================================
+    const letters = ["A", "B", "C", "D"];
+    let selectedCourseKey = Object.keys(bankSoal)[0];
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let isAnswered = false;
+    let reviewHistory = [];
+
+    // Elemen DOM
+    const startScreen = document.getElementById("startScreen");
+    const quizScreen = document.getElementById("quizScreen");
+    const resultScreen = document.getElementById("resultScreen");
+
+    const headerTitle = document.getElementById("headerTitle");
+    const headerSubtitle = document.getElementById("headerSubtitle");
+
+    const courseSelect = document.getElementById("courseSelect");
+    const courseCards = document.getElementById("courseCards");
+    const startBtn = document.getElementById("startBtn");
+
+    const questionCounter = document.getElementById("questionCounter");
+    const liveScore = document.getElementById("liveScore");
+    const progressFill = document.getElementById("progressFill");
+    const questionText = document.getElementById("questionText");
+    const optionsList = document.getElementById("optionsList");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const feedbackTitle = document.getElementById("feedbackTitle");
+    const feedbackExplanation = document.getElementById("feedbackExplanation");
+    const nextBtn = document.getElementById("nextBtn");
+
+    const finalScore = document.getElementById("finalScore");
+    const scoreStatus = document.getElementById("scoreStatus");
+    const scoreDetail = document.getElementById("scoreDetail");
+    const totalCorrect = document.getElementById("totalCorrect");
+    const totalWrong = document.getElementById("totalWrong");
+    const retryBtn = document.getElementById("retryBtn");
+    const changeCourseBtn = document.getElementById("changeCourseBtn");
+    const reviewList = document.getElementById("reviewList");
+
+    // Fungsi Acak Array (Fisher-Yates Shuffle)
+    function shuffleArray(array) {
+      const cloned = [...array];
+      for (let i = cloned.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cloned[i], cloned[j]] = [cloned[j], cloned[i]];
+      }
+      return cloned;
+    }
+
+    // Inisialisasi Pilihan Mata Kuliah
+    function initCourseSelection() {
+      courseSelect.innerHTML = "";
+      courseCards.innerHTML = "";
+
+      Object.keys(bankSoal).forEach((key) => {
+        const course = bankSoal[key];
+
+        // Isi Dropdown
+        const option = document.createElement("option");
+        option.value = key;
+        option.textContent = `${course.kode} - ${course.nama} (${course.soal.length} Soal)`;
+        courseSelect.appendChild(option);
+
+        // Isi Kartu Pilihan
+        const card = document.createElement("div");
+        card.className = `course-card ${key === selectedCourseKey ? "active" : ""}`;
+        card.dataset.key = key;
+        card.innerHTML = `
+          <div class="course-card-top">
+            <span class="course-code">${course.kode}</span>
+            <span class="course-count">${course.soal.length} Soal Tersedia</span>
+          </div>
+          <div class="course-title">${course.nama}</div>
+          <div class="course-desc">${course.deskripsi}</div>
+        `;
+        card.addEventListener("click", () => selectCourse(key));
+        courseCards.appendChild(card);
+      });
+
+      courseSelect.value = selectedCourseKey;
+    }
+
+    function selectCourse(key) {
+      selectedCourseKey = key;
+      courseSelect.value = key;
+      document.querySelectorAll(".course-card").forEach((card) => {
+        card.classList.toggle("active", card.dataset.key === key);
+      });
+    }
+
+    courseSelect.addEventListener("change", (e) => {
+      selectCourse(e.target.value);
+    });
+
+    // Mulai Kuis
+    function startQuiz() {
+      const course = bankSoal[selectedCourseKey];
+      currentQuestions = shuffleArray(course.soal);
+      currentIndex = 0;
+      score = 0;
+      reviewHistory = [];
+
+      headerTitle.textContent = `${course.kode} - ${course.nama}`;
+      headerSubtitle.textContent = "Pilih salah satu jawaban yang paling tepat";
+
+      startScreen.classList.add("hidden");
+      resultScreen.classList.add("hidden");
+      quizScreen.classList.remove("hidden");
+
+      renderQuestion();
+    }
+
+    // Tampilkan Soal Satu per Satu
+    function renderQuestion() {
+      isAnswered = false;
+      const q = currentQuestions[currentIndex];
+      const total = currentQuestions.length;
+
+      questionCounter.textContent = `Soal ${currentIndex + 1} dari ${total}`;
+      liveScore.textContent = `Benar: ${score}`;
+      progressFill.style.width = `${((currentIndex) / total) * 100}%`;
+
+      questionText.textContent = `${currentIndex + 1}. ${q.pertanyaan}`;
+      optionsList.innerHTML = "";
+      feedbackBox.classList.add("hidden");
+      nextBtn.classList.add("hidden");
+
+      q.pilihan.forEach((teksPilihan, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerHTML = `
+          <span class="option-letter">${letters[idx]}</span>
+          <span>${teksPilihan}</span>
+        `;
+        btn.addEventListener("click", () => handleAnswer(idx, btn));
+        optionsList.appendChild(btn);
+      });
+    }
+
+    // Proses Jawaban & Tampilkan Feedback Instan
+    function handleAnswer(selectedIndex, selectedButton) {
+      if (isAnswered) return;
+      isAnswered = true;
+
+      const q = currentQuestions[currentIndex];
+      const correctIndex = q.jawabanBenar;
+      const isCorrect = selectedIndex === correctIndex;
+      const allButtons = optionsList.querySelectorAll(".option-btn");
+
+      allButtons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === correctIndex) {
+          btn.classList.add("correct");
+        }
+      });
+
+      if (isCorrect) {
+        score++;
+        liveScore.textContent = `Benar: ${score}`;
+        feedbackBox.className = "feedback-box correct";
+        feedbackTitle.textContent = "✓ Jawaban Anda Benar!";
+      } else {
+        selectedButton.classList.add("wrong");
+        feedbackBox.className = "feedback-box wrong";
+        feedbackTitle.textContent = `✕ Kurang Tepat (Jawaban Benar: ${letters[correctIndex]})`;
+      }
+
+      feedbackExplanation.textContent = q.penjelasan;
+      feedbackBox.classList.remove("hidden");
+
+      // Simpan untuk ringkasan akhir
+      reviewHistory.push({
+        pertanyaan: q.pertanyaan,
+        jawabanUser: `${letters[selectedIndex]}. ${q.pilihan[selectedIndex]}`,
+        jawabanBenar: `${letters[correctIndex]}. ${q.pilihan[correctIndex]}`,
+        isCorrect,
+        penjelasan: q.penjelasan
+      });
+
+      progressFill.style.width = `${((currentIndex + 1) / currentQuestions.length) * 100}%`;
+      nextBtn.textContent = currentIndex === currentQuestions.length - 1 ? "Lihat Skor Akhir" : "Soal Berikutnya";
+      nextBtn.classList.remove("hidden");
+    }
+
+    // Lanjut ke Soal Berikutnya atau Hasil Akhir
+    nextBtn.addEventListener("click", () => {
+      currentIndex++;
+      if (currentIndex < currentQuestions.length) {
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    });
+
+    // Tampilkan Skor Akhir
+    function showResults() {
+      quizScreen.classList.add("hidden");
+      resultScreen.classList.remove("hidden");
+
+      const total = currentQuestions.length;
+      const wrong = total - score;
+      const nilai = Math.round((score / total) * 100);
+
+      headerSubtitle.textContent = "Hasil Evaluasi Latihan UAS";
+      finalScore.textContent = nilai;
+      totalCorrect.textContent = score;
+      totalWrong.textContent = wrong;
+      scoreDetail.textContent = `Anda menjawab benar ${score} dari ${total} soal (${nilai}%).`;
+
+      if (nilai >= 80) {
+        scoreStatus.textContent = "Sangat Baik! Siap Menghadapi UAS";
+      } else if (nilai >= 60) {
+        scoreStatus.textContent = "Cukup Baik, Tingkatkan Lagi!";
+      } else {
+        scoreStatus.textContent = "Perlu Latihan Ulang Materi";
+      }
+
+      // Render Ringkasan Pembahasan
+      reviewList.innerHTML = "";
+      reviewHistory.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = `review-item ${item.isCorrect ? "ok" : "no"}`;
+        div.innerHTML = `
+          <div class="review-q">${index + 1}. ${item.pertanyaan}</div>
+          <div class="review-ans">Jawaban Anda: <strong>${item.jawabanUser}</strong> ${item.isCorrect ? "(Benar)" : "(Salah)"}</div>
+          ${!item.isCorrect ? `<div class="review-ans">Kunci Jawaban: <strong>${item.jawabanBenar}</strong></div>` : ""}
+          <div><em>Pembahasan:</em> ${item.penjelasan}</div>
+        `;
+        reviewList.appendChild(div);
+      });
+    }
+
+    // Event Listener Tombol Navigasi
+    startBtn.addEventListener("click", startQuiz);
+    retryBtn.addEventListener("click", startQuiz);
+    changeCourseBtn.addEventListener("click", () => {
+      resultScreen.classList.add("hidden");
+      startScreen.classList.remove("hidden");
+      headerTitle.textContent = "Latihan Kuis UAS";
+      headerSubtitle.textContent = "Pilih mata kuliah untuk memulai latihan soal acak";
+    });
+
+    // Jalankan saat halaman dimuat
+    initCourseSelection();
+  </script>
+</body>
+</html>
