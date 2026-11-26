@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kuis Interaktif Latihan UAS - Universitas Terbuka</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="header-badge" id="courseBadge">SIMULASI UAS UT</div>
+      <h1 id="headerTitle">Kuis Interaktif Latihan UAS</h1>
+      <p id="headerSubtitle">Pilih mata kuliah dan uji pemahamanmu secara acak</p>
+    </header>
+
+    <main class="app-body">
+      <!-- SCREEN 1: PILIH MATA KULIAH -->
+      <section id="startScreen" class="screen">
+        <div class="form-group">
+          <label for="courseSelect" class="field-label">Pilih Mata Kuliah</label>
+          <select id="courseSelect" class="select-input" aria-label="Pilih Mata Kuliah"></select>
+        </div>
+
+        <div id="coursePreview" class="course-cards"></div>
+
+        <div class="form-group">
+          <label for="questionCountSelect" class="field-label">Jumlah Soal Latihan</label>
+          <select id="questionCountSelect" class="select-input" aria-label="Jumlah Soal Latihan">
+            <option value="all">Semua Soal (Lengkap)</option>
+            <option value="10">10 Soal Acak (Cepat)</option>
+            <option value="20">20 Soal Acak (Sedang)</option>
+            <option value="40">40 Soal Acak (Simulasi UAS)</option>
+          </select>
+        </div>
+
+        <button id="startBtn" type="button" class="btn btn-primary">
+          Mulai Kuis Sekarang
+        </button>
+      </section>
+
+      <!-- SCREEN 2: KUIS INTERAKTIF -->
+      <section id="quizScreen" class="screen hidden">
+        <div class="quiz-status-bar">
+          <span id="questionCounter" class="status-pill">Soal 1 dari 80</span>
+          <span id="liveScore" class="status-pill score-pill">Benar: 0</span>
+        </div>
+
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+
+        <article class="question-card">
+          <h2 id="questionText" class="question-text"></h2>
+          <div id="optionsList" class="options-list" role="radiogroup"></div>
+        </article>
+
+        <div id="feedbackBox" class="feedback-box hidden" aria-live="polite">
+          <div id="feedbackTitle" class="feedback-title"></div>
+          <p id="feedbackExplanation" class="feedback-text"></p>
+        </div>
+
+        <div class="quiz-actions">
+          <button id="nextBtn" type="button" class="btn btn-primary hidden">
+            Soal Berikutnya
+          </button>
+        </div>
+      </section>
+
+      <!-- SCREEN 3: HASIL & SKOR AKHIR -->
+      <section id="resultScreen" class="screen hidden">
+        <div class="result-hero">
+          <div class="score-ring">
+            <span id="finalScore" class="score-big">0</span>
+            <span class="score-unit">SKOR AKHIR</span>
+          </div>
+          <h2 id="scorePredicate" class="result-title">Selesai!</h2>
+          <p id="scoreSummary" class="result-subtitle"></p>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-box stat-correct">
+            <span id="correctCount" class="stat-num">0</span>
+            <span class="stat-label">Benar</span>
+          </div>
+          <div class="stat-box stat-wrong">
+            <span id="wrongCount" class="stat-num">0</span>
+            <span class="stat-label">Salah</span>
+          </div>
+        </div>
+
+        <div class="result-buttons">
+          <button id="retryBtn" type="button" class="btn btn-primary">
+            Ulangi Kuis (Acak Ulang)
+          </button>
+          <button id="homeBtn" type="button" class="btn btn-secondary">
+            Ganti Mata Kuliah
+          </button>
+        </div>
+
+        <div class="review-wrapper">
+          <h3 class="review-heading">Pembahasan Jawaban</h3>
+          <div id="reviewList" class="review-list"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
